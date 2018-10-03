@@ -32,6 +32,26 @@ class Liquidacion(models.Model):
 			total += cheque_id.importe
 		self.total = total
 
+	@api.one
+	def cancelar(self):
+		self.state = 'cancelada'
+
+	@api.one
+	def enviar(self):
+		self.state = 'enviada'
+
+	@api.one
+	def evaluacion(self):
+		self.state = 'evaluacion'
+
+	@api.one
+	def presupuesto(self):
+		self.state = 'presupuesto'
+
+	@api.one
+	def confirmar(self):
+		self.state = 'confirmada'
+
 class Cheque(models.Model):
 	_name = 'descontar.liquidacion.cheque'
 

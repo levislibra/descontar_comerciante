@@ -21,13 +21,12 @@
         <field name="arch" type="xml">
             <form string="Liquidacion">
               <header>
-                <button name="enviar" class="oe_highlight oe_read_only" states="borrador" string="Enviar" type="object"/>
-                <button name="cancelar" string="Cancelar" type="object"/>
                 <field name="state" widget="statusbar" readonly="1"/>
               </header>
               <sheet>
+                <button name="cancelar" string="Cancelar" type="object"/>
                 <group>
-                  <group string="Nombre y Codigo">
+                  <group>
                     <field name="fecha_liquidacion" readonly="1"/>
                     <field name="fecha_efectivo" required="1"/>
                   </group>
@@ -36,20 +35,24 @@
                   <page string="Cheques">
                     <field name="cheque_ids">
                       <tree editable="1">
-                        <field name="importe"/>
+                        <field name="importe" widget="char"/>
                         <field name="frente" widget='image' height="50"/>
-                        <!-- <field name="dorso" widget='image' height="150"/> -->
+                        <field name="dorso" widget='image' height="50"/>
                       </tree>
-                      <form>
+                    <form>
                         <group>
-                          <field name="importe"/>
+                          <field name="importe" widget="char"/>
+                          <field name="frente" widget='image' />
+                          <field name="dorso" widget='image'/>
                         </group>
-                        <field name="frente" widget='image' height="250"/>
-                        <field name="dorso" widget='image' height="250"/>
                       </form>
                     </field>
                   </page>
                 </notebook>
+                <footer>
+                  <button name="enviar" class="oe_highlight" states="borrador" string="Enviar" type="object"/>
+                  <!-- oe_read_only -->
+              </footer>
               </sheet>
             </form>
         </field>

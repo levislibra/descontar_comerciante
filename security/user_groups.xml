@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+
+	<record model="ir.module.category" id="descontar_management">
+	  <field name="name">Descontar cheques</field>
+	  <field name="description">Nivel de acceso</field>
+	  <field name="sequence">1</field>
+	</record>
+
+	<record id="comerciante" model="res.groups">
+     <field name="name">Usuario</field>
+     <field name="category_id" ref="descontar_management"/>
+    </record>
+
+    <record id="administrador" model="res.groups">
+     <field name="name">Administrador</field>
+     <field name="category_id" ref="descontar_management"/>
+    </record>
+
+</data>
+</openerp>
