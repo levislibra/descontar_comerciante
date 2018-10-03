@@ -1,0 +1,78 @@
+<openerp>
+  <data>
+    <!-- explicit list view definition -->
+    
+    <record model="ir.ui.view" id="descontar_liquidacion_tree">
+      <field name="name">Descontar Liquidaicon Tree</field>
+      <field name="model">descontar.liquidacion</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="fecha_liquidacion"/>
+          <field name="fecha_efectivo"/>
+          <field name="cheque_ids"/>
+          <field name="total"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="descontar_liquidacion_form" model="ir.ui.view">
+        <field name="name">Descontar Liquidacion Form</field>
+        <field name="model">descontar.liquidacion</field>
+        <field name="arch" type="xml">
+            <form string="Liquidacion">
+              <header>
+                <button name="enviar" class="oe_highlight oe_read_only" states="borrador" string="Enviar" type="object"/>
+                <button name="cancelar" string="Cancelar" type="object"/>
+                <field name="state" widget="statusbar" readonly="1"/>
+              </header>
+              <sheet>
+                <group>
+                  <group string="Nombre y Codigo">
+                    <field name="fecha_liquidacion" readonly="1"/>
+                    <field name="fecha_efectivo" required="1"/>
+                  </group>
+                </group>
+                <notebook>
+                  <page string="Cheques">
+                    <field name="cheque_ids">
+                      <tree editable="1">
+                        <field name="importe"/>
+                        <field name="frente" widget='image' height="50"/>
+                        <!-- <field name="dorso" widget='image' height="150"/> -->
+                      </tree>
+                      <form>
+                        <group>
+                          <field name="importe"/>
+                        </group>
+                        <field name="frente" widget='image' height="250"/>
+                        <field name="dorso" widget='image' height="250"/>
+                      </form>
+                    </field>
+                  </page>
+                </notebook>
+              </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- actions opening views on models -->
+    
+    <record model="ir.actions.act_window" id="descontar_liquidacion_action">
+      <field name="name">Descontar cheques</field>
+      <field name="res_model">descontar.liquidacion</field>
+      <field name="view_mode">tree,form</field>
+      <field name="view_id" ref="descontar_liquidacion_tree"/>
+    </record>
+
+    <!-- Menu Principal del modulo (barra superior) -->
+    <menuitem id="menu_descontar" name="Descontar Cheques" web_icon="descontar_comerciante,static/description/icon.png" />
+    <!-- groups="descontar_comerciante.comerciante" -->
+
+    <!-- SubMenu 1 - Mis liquidaciones -->
+    <menuitem id="smenu_liquidaciones" name="Operaciones" parent="menu_descontar"  sequence="0" />
+
+    <!-- Actions -->
+    <menuitem id="smenu_liquidaciones_action" name="Mis operaciones" parent="smenu_liquidaciones" action="descontar_liquidacion_action"  sequence="5" />
+
+  </data>
+</openerp>
