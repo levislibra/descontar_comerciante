@@ -6,14 +6,38 @@
       <field name="name">Descontar Liquidaicon Tree</field>
       <field name="model">descontar.liquidacion</field>
       <field name="arch" type="xml">
-        <tree>
+        <tree decoration-info="state == 'borrador'" decoration-muted="state == 'cancelada'">
+          <field name="name"/>
           <field name="fecha_liquidacion"/>
           <field name="fecha_efectivo"/>
           <field name="cheque_ids"/>
           <field name="total"/>
+          <field name="state"/>
+          <field name="create_uid" groups="descontar_comerciante.administrador"/>
         </tree>
       </field>
     </record>
+
+
+    <!-- Filter -->
+
+    <record model="ir.ui.view" id="descontar_liquidacion_filter">
+      <field name="name">descontar.liquidacion.filter</field>
+      <field name="model">descontar.liquidacion</field>
+      <field name="arch" type="xml">
+        <search>
+          <filter string="Pendientes" name="pendientes" domain="[('state','not in',('confirmada', 'cancelada'))]"/>
+          <filter string="Con Presupuesto" name="presupuestos" domain="[('state','=', 'presupuesto')]"/>
+          <filter string="Confirmadas" name="confirmadas" domain="[('state','=', 'confirmada')]"/>
+          <filter string="Enviadas" name="enviadas" domain="[('state','=', 'enviada')]"/>
+          <filter string="Canceladas" name="canceladas" domain="[('state','=', 'cancelada')]"/>
+          <separator/>
+          <field name="name"/>
+          <field name="create_uid" groups="descontar_comerciante.administrador"/>
+        </search>
+      </field>
+    </record>
+
 
     <record id="descontar_liquidacion_form" model="ir.ui.view">
         <field name="name">Descontar Liquidacion Form</field>
@@ -23,10 +47,18 @@
               <header>
                 <field name="state" widget="statusbar" readonly="1"/>
               </header>
-              <sheet>
+              <header>
+                <button name="editar" states="editar" string="Editar" type="object"/>
+                <button name="enviar" class="oe_highlight" states="borrador" string="Enviar" type="object"/>
+                <button name="evaluacion" class="oe_highlight" states="enviada" string="Procesar Liquidacion" type="object" groups="descontar_comerciante.administrador"/>
+                <button name="presupuesto" class="oe_highlight" states="evaluacion" string="Presupuesto" type="object" groups="descontar_comerciante.administrador"/>
+                <button name="confirmar" class="oe_highlight" states="presupuesto" string="Confirmar" type="object"/>
                 <button name="cancelar" string="Cancelar" type="object"/>
+              </header>
+              <sheet>
                 <group>
                   <group>
+                    <field name="name" readonly="1"/>
                     <field name="fecha_liquidacion" readonly="1"/>
                     <field name="fecha_efectivo" required="1"/>
                   </group>
@@ -51,7 +83,6 @@
                 </notebook>
                 <footer>
                   <button name="enviar" class="oe_highlight" states="borrador" string="Enviar" type="object"/>
-                  <!-- oe_read_only -->
               </footer>
               </sheet>
             </form>
@@ -60,7 +91,15 @@
 
     <!-- actions opening views on models -->
     
-    <record model="ir.actions.act_window" id="descontar_liquidacion_action">
+    <record model="ir.actions.act_window" id="descontar_liquidacion_comerciante_action">
+      <field name="name">Descontar cheques</field>
+      <field name="res_model">descontar.liquidacion</field>
+      <field name="view_mode">tree,form</field>
+      <field name="domain">[('create_uid', '=', uid)]</field>
+      <field name="view_id" ref="descontar_liquidacion_tree"/>
+    </record>
+
+    <record model="ir.actions.act_window" id="descontar_liquidacion_administrator_action">
       <field name="name">Descontar cheques</field>
       <field name="res_model">descontar.liquidacion</field>
       <field name="view_mode">tree,form</field>
@@ -75,7 +114,8 @@
     <menuitem id="smenu_liquidaciones" name="Operaciones" parent="menu_descontar"  sequence="0" />
 
     <!-- Actions -->
-    <menuitem id="smenu_liquidaciones_action" name="Mis operaciones" parent="smenu_liquidaciones" action="descontar_liquidacion_action"  sequence="5" />
+    <menuitem id="smenu_liquidaciones_comerciante_action" name="Mis operaciones" parent="smenu_liquidaciones" action="descontar_liquidacion_comerciante_action" groups="descontar_comerciante.comerciante" sequence="5" />
+    <menuitem id="smenu_liquidaciones_administrator_action" name="Todas las operaciones" parent="smenu_liquidaciones" action="descontar_liquidacion_administrator_action" groups="descontar_comerciante.administrador" sequence="5" />
 
   </data>
 </openerp>

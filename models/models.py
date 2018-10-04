@@ -16,6 +16,7 @@ class Liquidacion(models.Model):
 	_name = 'descontar.liquidacion'
 
 	_order = 'id desc'
+	name = fields.Char("Operacion Nro")
 	id = fields.Integer('Nro Liquidacion')
 	fecha_liquidacion = fields.Date('Fecha', default=lambda *a: time.strftime('%Y-%m-%d'))
 	fecha_efectivo = fields.Date('Fecha que necesita el efectivo', default=lambda *a: time.strftime('%Y-%m-%d'))
@@ -24,6 +25,14 @@ class Liquidacion(models.Model):
 	cheque_ids = fields.One2many('descontar.liquidacion.cheque', 'liquidacion_id', 'Cheques')
 	total = fields.Float('Importe', digits=(16, 2), compute='_compute_total')
 	state = fields.Selection([('borrador', 'Borrador'), ('enviada', 'Enviada'), ('evaluacion', 'Evaluacion'), ('presupuesto', 'Presupuesto'), ('confirmada', 'Confirmada'), ('cancelada', 'Cancelada')], string='Estado', default='borrador')
+
+	@api.model
+	def create(self, values):
+		rec = super(Liquidacion, self).create(values)
+		rec.update({
+			'name': 'OP - '  + str(rec.id).zfill(8),
+		})
+		return rec
 
 	@api.one
 	def _compute_total(self):
@@ -39,6 +48,11 @@ class Liquidacion(models.Model):
 	@api.one
 	def enviar(self):
 		self.state = 'enviada'
+
+	@api.one
+	def editar(self):
+		self.state = 'borrador'
+
 
 	@api.one
 	def evaluacion(self):
